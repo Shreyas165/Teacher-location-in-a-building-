@@ -212,3 +212,13 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 });
+const BACKEND_URL = "https://teacher-location-in-a-building-api.vercel.app";
+fetch(`${BACKEND_URL}/api/people`)
+    .then(response => response.json())
+    .then(data => {
+        console.log(data);
+    })
+    .catch(error => {
+        console.error("Error fetching data:", error);
+    });
+
