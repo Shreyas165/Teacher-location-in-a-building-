@@ -20,7 +20,7 @@ app.use(express.static(__dirname + '/www'));
 
 const storage = multer.diskStorage({
     destination: async (req, file, cb) => {
-        const dir = path.join(__dirname, "public", "images");
+        const dir = path.join('/temp', "public", "images");
         try {
             await fs.mkdir(dir, { recursive: true });
             cb(null, dir);
@@ -75,7 +75,7 @@ const resizeImage = async (req, res, next) => {
 };
 
 
-const csvFilePath = path.join(__dirname, "data", "directory.csv");
+const csvFilePath = path.join('/temp', "data", "directory.csv");
 
 
 async function ensureDirectoryExists(dirPath) {
