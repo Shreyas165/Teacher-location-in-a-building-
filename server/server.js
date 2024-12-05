@@ -8,15 +8,12 @@ const sharp = require("sharp");
 const app = express();
 const PORT = 3000;
 
-
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use('/images', express.static(path.join(__dirname, 'public', 'images')));
 app.use(express.static(path.join(__dirname, 'public')));
-// added this line and moved all ur css html js files [ static files in www]
 app.use(express.static(__dirname + '/www'));
-
 
 const storage = multer.diskStorage({
     destination: async (req, file, cb) => {
@@ -33,7 +30,6 @@ const storage = multer.diskStorage({
         cb(null, `${Date.now()}-${file.originalname}`);
     },
 });
-
 
 const upload = multer({
     storage: storage,
@@ -61,10 +57,8 @@ const resizeImage = async (req, res, next) => {
             .resize(132, 170, { fit: 'fill' })
             .toFile(resizedFilePath);
 
-
         req.file.path = resizedFilePath;
         req.file.filename = path.basename(resizedFilePath);
-
 
         await fs.unlink(filePath);
         next();
@@ -75,7 +69,7 @@ const resizeImage = async (req, res, next) => {
 };
 
 
-const csvFilePath = path.join(__dirname, "data", "directory.csv");
+const csvFilePath = path.join('/tmp', 'directory.csv');
 
 
 async function ensureDirectoryExists(dirPath) {
@@ -96,7 +90,7 @@ async function readCSV() {
             return { name: name?.trim(), floor: floor?.trim(), branch: branch?.trim(), directions: directions?.trim(), image: image?.trim() };
         });
     } catch (err) {
-        console.error("Error reading CSV file:", err);
+        console.error("Error reading temporary CSV file:", err);
         return [];
     }
 }
@@ -109,7 +103,7 @@ async function writeCSV(teachers) {
         );
         await fs.writeFile(csvFilePath, rows.join("\n"), "utf8");
     } catch (err) {
-        console.error("Error writing to CSV file:", err);
+        console.error("Error writing to temporary CSV file:", err);
         throw err;
     }
 }
@@ -231,7 +225,7 @@ app.delete("/api/delete-teacher/:name", async (req, res) => {
 });
 
 
-ensureDirectoryExists(path.join(__dirname, "data"))
+ensureDirectoryExists(path.join(__dirname, "/tmp"))
     .then(() => {
         app.listen(PORT, () => {
             console.log(`Server running at http://localhost:${PORT}`);
